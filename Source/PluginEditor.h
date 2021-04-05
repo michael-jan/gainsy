@@ -8,20 +8,19 @@
 
 #pragma once
 
-#include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include <JuceHeader.h>
 
 //==============================================================================
 /**
 */
-class GainsyAudioProcessorEditor  : public juce::AudioProcessorEditor
-{
+class GainsyAudioProcessorEditor : public juce::AudioProcessorEditor {
 public:
-    GainsyAudioProcessorEditor (GainsyAudioProcessor&);
+    GainsyAudioProcessorEditor(GainsyAudioProcessor&);
     ~GainsyAudioProcessorEditor() override;
 
     //==============================================================================
-    void paint (juce::Graphics&) override;
+    void paint(juce::Graphics&) override;
     void resized() override;
 
 private:
@@ -29,5 +28,5 @@ private:
     // access the processor object that created it.
     GainsyAudioProcessor& audioProcessor;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GainsyAudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GainsyAudioProcessorEditor)
 };
