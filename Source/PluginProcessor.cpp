@@ -27,8 +27,6 @@ GainsyAudioProcessor::GainsyAudioProcessor() :
         DBG("failed to create mypipe: already exists");
     else
         DBG("pipe created!");
-    auto data = "is this C++";
-    auto ret = pipe.write(data, strlen(data) + 1, 200);
 
     juce::NamedPipe pipe2;
     if (!pipe2.openExisting("mypipe"))
@@ -36,6 +34,8 @@ GainsyAudioProcessor::GainsyAudioProcessor() :
     else
         DBG("pipe2 created!");
 
+    auto data = "is this C++";
+    auto ret = pipe.write(data, strlen(data) + 1, 200);
     DBG("aaa write returned: " + std::to_string(ret));
 
     char datum[256] = { 0 };
