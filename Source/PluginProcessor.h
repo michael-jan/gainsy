@@ -60,7 +60,7 @@ private:
 
     juce::AudioParameterChoice* modeParam;
     juce::AudioParameterInt* channelParam;
-    juce::NamedPipe pipe;
+
     juce::AudioProcessorValueTreeState params;
 
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
