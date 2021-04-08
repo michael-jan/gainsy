@@ -10,18 +10,18 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-GainsyAudioProcessor::GainsyAudioProcessor()
+GainsyAudioProcessor::GainsyAudioProcessor() :
 #ifndef JucePlugin_PreferredChannelConfigurations
-    : AudioProcessor(BusesProperties()
+    AudioProcessor(BusesProperties()
 #if !JucePlugin_IsMidiEffect
 #if !JucePlugin_IsSynth
                          .withInput("Input", juce::AudioChannelSet::stereo(), true)
 #endif
                          .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
-            )
-    , params(*this, nullptr, "PARAMETERS", createParameterLayout())
+    ),
 #endif
+    params(*this, nullptr, "PARAMETERS", createParameterLayout())
 {
 }
 
