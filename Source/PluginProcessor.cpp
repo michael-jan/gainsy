@@ -15,18 +15,42 @@ GainsyAudioProcessor::GainsyAudioProcessor() :
     AudioProcessor(BusesProperties()
 #if !JucePlugin_IsMidiEffect
 #if !JucePlugin_IsSynth
-                         .withInput("Input", juce::AudioChannelSet::stereo(), true)
+        .withInput("Input", juce::AudioChannelSet::stereo(), true)
 #endif
-                         .withOutput("Output", juce::AudioChannelSet::stereo(), true)
+        .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
     ),
 #endif
     params(*this, nullptr, "PARAMETERS", createParameterLayout())
 {
+    if (!pipe.createNewPipe("mypipe"))
+        DBG("failed to create mypipe: already exists");
+    else
+        DBG("pipe created!");
+    auto data = "is this C++";
+    auto ret = pipe.write(data, strlen(data) + 1, 200);
+
+    juce::NamedPipe pipe2;
+    if (!pipe2.openExisting("mypipe"))
+        DBG("failed to create mypipe2: already exists");
+    else
+        DBG("pipe2 created!");
+
+    DBG("aaa write returned: " + std::to_string(ret));
+
+    char datum[256] = { 0 };
+    ret = pipe2.read(datum, strlen(data) + 1, 200);
+    DBG("read returned: " + std::to_string(ret));
+
+    datum[strlen(data) + 1] = 0;
+    DBG(std::string("Got back datum: '") + datum + "' of size: " + std::to_string(strlen(datum)));
+    pipe2.close();
 }
 
 GainsyAudioProcessor::~GainsyAudioProcessor()
 {
+    DBG("Closing pipe");
+    pipe.close();
 }
 
 //==============================================================================
