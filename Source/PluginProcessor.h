@@ -9,6 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "ebur128.h"
 
 //==============================================================================
 /**
@@ -62,6 +63,10 @@ private:
     juce::AudioParameterInt* channelParam;
 
     juce::AudioProcessorValueTreeState params;
+    
+    float prev;
+    float deinterleavedBuf[8192];
+    ebur128_state* loudnessState;
 
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
