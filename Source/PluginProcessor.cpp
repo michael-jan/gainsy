@@ -11,7 +11,7 @@
 
 //==============================================================================
 
-std::atomic<double> loudness[128] = {0.0};
+std::atomic<float> loudness[128] = {0.0};
 
 GainsyAudioProcessor::GainsyAudioProcessor() :
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -26,7 +26,6 @@ GainsyAudioProcessor::GainsyAudioProcessor() :
 #endif
     params(*this, nullptr, "PARAMETERS", createParameterLayout())
 {
-    loudnessState = nullptr;
 }
 
 GainsyAudioProcessor::~GainsyAudioProcessor()
@@ -100,17 +99,12 @@ void GainsyAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
-    if (!loudnessState) {
-        if (!(loudnessState = ebur128_init(2, sampleRate, EBUR128_MODE_S)))
-            DBG("this is very sad");
-    }
 }
 
 void GainsyAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
-    ebur128_destroy(&loudnessState);
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -139,6 +133,8 @@ bool GainsyAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) co
 }
 #endif
 
+float prev = 0.0;
+
 void GainsyAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
@@ -151,26 +147,16 @@ void GainsyAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear(i, 0, buffer.getNumSamples());
     
-    
-    juce::AudioDataConverters::interleaveSamples(buffer.getArrayOfReadPointers(),
-                                                 deinterleavedBuf,
-                                                 buffer.getNumSamples(),
-                                                 totalNumInputChannels);
-    
-    ebur128_add_frames_float(loudnessState,
-                             deinterleavedBuf,
-                             buffer.getNumSamples() * totalNumInputChannels);
-    
-    double tmp;
-    ebur128_loudness_shortterm(loudnessState, &tmp);
-    loudness[*channelParam] = tmp;
-    
-    DBG(tmp);
-    
     if (modeParam->getIndex() == 0) {
         // before
+        loudness[0] = (loudness[0] + buffer.getRMSLevel(0, 0, buffer.getNumSamples())) / 2;
     } else {
         // after
+        float level = buffer.getRMSLevel(0, 0, buffer.getNumSamples());
+        if (level > 0.00001) {
+            buffer.applyGainRamp(0, buffer.getNumSamples(), prev, loudness[0]/level);
+            prev = loudness[0]/level;
+        }
     }
 }
 
