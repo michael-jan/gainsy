@@ -9,7 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "Ebu128LoudnessMeter.h"
+#include "LoudnessMatcher.h"
 
 //==============================================================================
 /**
@@ -65,8 +65,8 @@ private:
     juce::AudioProcessorValueTreeState params;
 
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
-    Ebu128LoudnessMeter loudnessMeter;
-    float prevRatio;
+    
+    LoudnessMatcher loudnessMatcher;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GainsyAudioProcessor)
 };

@@ -11,8 +11,6 @@
 
 //==============================================================================
 
-std::atomic<float> loudness[128] = {0.0};
-
 GainsyAudioProcessor::GainsyAudioProcessor() :
 #ifndef JucePlugin_PreferredChannelConfigurations
     AudioProcessor(BusesProperties()
@@ -25,9 +23,8 @@ GainsyAudioProcessor::GainsyAudioProcessor() :
     ),
 #endif
     params(*this, nullptr, "PARAMETERS", createParameterLayout()),
-    loudnessMeter()
+    loudnessMatcher()
 {
-    DBG("Running");
 }
 
 GainsyAudioProcessor::~GainsyAudioProcessor()
@@ -101,6 +98,10 @@ void GainsyAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+    loudnessMatcher.prepareToPlay(sampleRate,
+                                  getTotalNumInputChannels(),
+                                  samplesPerBlock,
+                                  (int) (sampleRate / samplesPerBlock));
 }
 
 void GainsyAudioProcessor::releaseResources()
@@ -146,22 +147,10 @@ void GainsyAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::
     // guaranteed to be empty - they may contain garbage).
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear(i, 0, buffer.getNumSamples());
-
-    loudnessMeter.processBlock(buffer);
-    int chanIndex = *channelParam;
-    float currentLoudness = juce::Decibels::decibelsToGain(loudnessMeter.getMomentaryLoudness());
-
-    if (modeParam->getIndex() == 0) {
-        // before
-        loudness[chanIndex] = currentLoudness;
-    } else {
-        // after
-        if (currentLoudness > 0.00001) {
-            float ratio = loudness[chanIndex] / currentLoudness;
-            buffer.applyGainRamp(0, buffer.getNumSamples(), prevRatio, ratio);
-            prevRatio = ratio;
-        }
-    }
+    
+    loudnessMatcher.processBlock(buffer,
+                                 modeParam->getIndex(), // before or after?
+                                 *channelParam);        // which Gainsy channel?
 }
 
 //==============================================================================

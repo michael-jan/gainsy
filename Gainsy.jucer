@@ -8,6 +8,10 @@
     <GROUP id="{8FF00C31-6481-4C51-4554-05105469F4FB}" name="Source">
       <FILE id="AfCAuu" name="Ebu128LoudnessMeter.cpp" compile="1" resource="0"
             file="Source/Ebu128LoudnessMeter.cpp"/>
+      <FILE id="r96AfH" name="LoudnessMatcher.h" compile="0" resource="0"
+            file="Source/LoudnessMatcher.h"/>
+      <FILE id="inLNIM" name="LoudnessMatcher.cpp" compile="1" resource="0"
+            file="Source/LoudnessMatcher.cpp"/>
       <FILE id="TjyVoe" name="Ebu128LoudnessMeter.h" compile="0" resource="0"
             file="Source/Ebu128LoudnessMeter.h"/>
       <GROUP id="{E58771A0-28E0-A0BF-8DF1-F73406377384}" name="filters">
