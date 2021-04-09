@@ -34,3 +34,4 @@
 # Custom
 Builds/
 JuceLibraryCode/
+.ccls-cache
