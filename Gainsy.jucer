@@ -2,8 +2,7 @@
 
 <JUCERPROJECT id="MXkzUq" name="Gainsy" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginFormats="buildAU,buildAUv3,buildStandalone,buildVST3"
-              pluginCharacteristicsValue="pluginIsMidiEffectPlugin" pluginVST3Category="Dynamics,Fx"
-              pluginAUMainType="'aufx'" cppLanguageStandard="17" displaySplashScreen="1">
+              pluginVST3Category="Dynamics,Fx" pluginAUMainType="'aufx'" cppLanguageStandard="17" displaySpashScreen="1">
   <MAINGROUP id="eXLAao" name="Gainsy">
     <GROUP id="{8FF00C31-6481-4C51-4554-05105469F4FB}" name="Source">
       <FILE id="it0qlY" name="PluginProcessor.cpp" compile="1" resource="0"
