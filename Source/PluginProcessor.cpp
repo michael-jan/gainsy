@@ -12,6 +12,7 @@
 //==============================================================================
 
 std::atomic<float> loudness[128] = {0.0};
+float prevRatio[128] = {0.0};
 
 GainsyAudioProcessor::GainsyAudioProcessor() :
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -24,8 +25,10 @@ GainsyAudioProcessor::GainsyAudioProcessor() :
 #endif
     ),
 #endif
-    params(*this, nullptr, "PARAMETERS", createParameterLayout())
+    params(*this, nullptr, "PARAMETERS", createParameterLayout()),
+    loudnessMeter()
 {
+    DBG("Running");
 }
 
 GainsyAudioProcessor::~GainsyAudioProcessor()
@@ -133,29 +136,34 @@ bool GainsyAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) co
 }
 #endif
 
-float prev = 0.0;
-
 void GainsyAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
-    
+
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
     // guaranteed to be empty - they may contain garbage).
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear(i, 0, buffer.getNumSamples());
-    
+
+    loudnessMeter.processBlock(buffer);
+    auto chanIndex = 0;
+    auto currentLoudness = loudnessMeter.getShortTermLoudness();
+    DBG("current loudness: " + std::to_string(currentLoudness));
+
     if (modeParam->getIndex() == 0) {
         // before
-        loudness[0] = (loudness[0] + buffer.getRMSLevel(0, 0, buffer.getNumSamples())) / 2;
+        loudness[chanIndex] = currentLoudness;
+        /* loudness[0] = (loudness[0] + buffer.getRMSLevel(0, 0, buffer.getNumSamples())) / 2; */
     } else {
         // after
-        float level = buffer.getRMSLevel(0, 0, buffer.getNumSamples());
-        if (level > 0.00001) {
-            buffer.applyGainRamp(0, buffer.getNumSamples(), prev, loudness[0]/level);
-            prev = loudness[0]/level;
+        /* float level = buffer.getRMSLevel(0, 0, buffer.getNumSamples()); */
+        if (currentLoudness > 0.00001) {
+            auto ratio = loudness[chanIndex] / currentLoudness;
+            buffer.applyGainRamp(0, buffer.getNumSamples(), prevRatio[chanIndex], ratio);
+            prevRatio[chanIndex] = ratio;
         }
     }
 }
@@ -197,7 +205,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout GainsyAudioProcessor::create
 
     auto channelParamUniq = std::make_unique<juce::AudioParameterInt>(
         "CHANNEL", "Channel", 1, 64, 1);
-    
+
     modeParam = modeParamUniq.get();
     channelParam = channelParamUniq.get();
 
