@@ -12,7 +12,6 @@
 //==============================================================================
 
 std::atomic<float> loudness[128] = {0.0};
-float prevRatio[128] = {0.0};
 
 GainsyAudioProcessor::GainsyAudioProcessor() :
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -149,21 +148,18 @@ void GainsyAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::
         buffer.clear(i, 0, buffer.getNumSamples());
 
     loudnessMeter.processBlock(buffer);
-    auto chanIndex = 0;
-    auto currentLoudness = loudnessMeter.getShortTermLoudness();
-    DBG("current loudness: " + std::to_string(currentLoudness));
+    int chanIndex = *channelParam;
+    float currentLoudness = juce::Decibels::decibelsToGain(loudnessMeter.getMomentaryLoudness());
 
     if (modeParam->getIndex() == 0) {
         // before
         loudness[chanIndex] = currentLoudness;
-        /* loudness[0] = (loudness[0] + buffer.getRMSLevel(0, 0, buffer.getNumSamples())) / 2; */
     } else {
         // after
-        /* float level = buffer.getRMSLevel(0, 0, buffer.getNumSamples()); */
         if (currentLoudness > 0.00001) {
-            auto ratio = loudness[chanIndex] / currentLoudness;
-            buffer.applyGainRamp(0, buffer.getNumSamples(), prevRatio[chanIndex], ratio);
-            prevRatio[chanIndex] = ratio;
+            float ratio = loudness[chanIndex] / currentLoudness;
+            buffer.applyGainRamp(0, buffer.getNumSamples(), prevRatio, ratio);
+            prevRatio = ratio;
         }
     }
 }

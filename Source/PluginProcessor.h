@@ -66,6 +66,7 @@ private:
 
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     Ebu128LoudnessMeter loudnessMeter;
+    float prevRatio;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GainsyAudioProcessor)
 };
