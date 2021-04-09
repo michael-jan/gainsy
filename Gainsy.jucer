@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="MXkzUq" name="Gainsy" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginFormats="buildAU,buildAUv3,buildStandalone,buildVST3"
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginFormats="buildStandalone,buildVST3"
               pluginVST3Category="Dynamics,Fx" pluginAUMainType="'aufx'" cppLanguageStandard="17"
               displaySplashScreen="1">
   <MAINGROUP id="eXLAao" name="Gainsy">
     <GROUP id="{8FF00C31-6481-4C51-4554-05105469F4FB}" name="Source">
+      <FILE id="AfCAuu" name="Ebu128LoudnessMeter.cpp" compile="1" resource="0"
+            file="Source/Ebu128LoudnessMeter.cpp"/>
+      <FILE id="TjyVoe" name="Ebu128LoudnessMeter.h" compile="0" resource="0"
+            file="Source/Ebu128LoudnessMeter.h"/>
+      <GROUP id="{E58771A0-28E0-A0BF-8DF1-F73406377384}" name="filters">
+        <FILE id="R2Eprp" name="SecondOrderIIRFilter.cpp" compile="1" resource="0"
+              file="Source/filters/SecondOrderIIRFilter.cpp"/>
+        <FILE id="XyTLAj" name="SecondOrderIIRFilter.h" compile="0" resource="0"
+              file="Source/filters/SecondOrderIIRFilter.h"/>
+      </GROUP>
       <FILE id="it0qlY" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="vqDIoQ" name="PluginProcessor.h" compile="0" resource="0"
-            file="Source/PluginProcessor.h"/>
+            file="Source/PluginProcessor.h" xcodeResource="0"/>
       <FILE id="OdXKbe" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="Uz4oVi" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
@@ -96,5 +106,6 @@
   <LIVE_SETTINGS>
     <OSX/>
     <WINDOWS/>
+    <LINUX/>
   </LIVE_SETTINGS>
 </JUCERPROJECT>
