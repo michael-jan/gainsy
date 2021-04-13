@@ -18,19 +18,22 @@ GainsyAudioProcessorEditor::GainsyAudioProcessorEditor(GainsyAudioProcessor& p)
     // TODO: does setting the size of components here even matter..?
 
     modeSwitch.setSize(40, 120);
-    addAndMakeVisible(modeSwitch);
-    modeAttachment.reset(new ButtonAttachment(p.getParams(), "MODE", modeSwitch));
+    channelNumbox.setSize(40, 120);
+    meter.setSize(40, 120);
 
     channelNumbox.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
     channelNumbox.setSliderSnapsToMousePosition(false);
     channelNumbox.setMouseDragSensitivity(350);
     channelNumbox.setColour(juce::Slider::trackColourId, juce::Colours::transparentBlack);
-    channelNumbox.setSize(40, 120);
+
+    addAndMakeVisible(modeSwitch);
     addAndMakeVisible(channelNumbox);
+    addAndMakeVisible(meter);
+
+    modeAttachment.reset(new ButtonAttachment(p.getParams(), "MODE", modeSwitch));
     channelAttachment.reset(new SliderAttachment(p.getParams(), "CHANNEL", channelNumbox));
 
     startTimerHz(refreshRate);
-    meter.setSize(40, 120);
 
     setSize(120, 360);
 }
