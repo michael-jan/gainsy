@@ -56,6 +56,12 @@ public:
     //==============================================================================
     juce::AudioProcessorValueTreeState& getParams() { return params; }
 
+    inline float getLoudness(void)
+    { return loudnessMatcher.getLoudness(); }
+
+    inline float getRatio(void)
+    { return loudnessMatcher.getRatio(); }
+
 private:
     //==============================================================================
 
@@ -65,7 +71,7 @@ private:
     juce::AudioProcessorValueTreeState params;
 
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
-    
+
     LoudnessMatcher loudnessMatcher;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GainsyAudioProcessor)

@@ -6,6 +6,10 @@
               displaySplashScreen="1">
   <MAINGROUP id="eXLAao" name="Gainsy">
     <GROUP id="{8FF00C31-6481-4C51-4554-05105469F4FB}" name="Source">
+      <GROUP id="{73B559C5-1405-5D12-D56C-5E9DA4E8A17A}" name="filters"/>
+      <FILE id="aPQ1Uy" name="MeterDisplay.cpp" compile="1" resource="0"
+            file="Source/MeterDisplay.cpp"/>
+      <FILE id="le3LlG" name="MeterDisplay.h" compile="0" resource="0" file="Source/MeterDisplay.h"/>
       <FILE id="AfCAuu" name="Ebu128LoudnessMeter.cpp" compile="1" resource="0"
             file="Source/Ebu128LoudnessMeter.cpp"/>
       <FILE id="r96AfH" name="LoudnessMatcher.h" compile="0" resource="0"

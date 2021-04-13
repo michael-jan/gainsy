@@ -25,6 +25,12 @@ public:
                       bool isBefore,
                       int chanIndex);
 
+    inline float getLoudness(void)
+    { return loudnessMeter.getMomentaryLoudness(); }
+
+    inline float getRatio(void)
+    { return prevRatio; }
+
 private:
     Ebu128LoudnessMeter loudnessMeter;
     float prevRatio;

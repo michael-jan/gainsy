@@ -9,6 +9,7 @@
 #pragma once
 
 #include "PluginProcessor.h"
+#include "MeterDisplay.h"
 #include <JuceHeader.h>
 
 //==============================================================================
@@ -16,7 +17,10 @@
 using ButtonAttachment = juce::AudioProcessorValueTreeState::ButtonAttachment;
 using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
 
-class GainsyAudioProcessorEditor : public juce::AudioProcessorEditor {
+class GainsyAudioProcessorEditor
+    : public juce::AudioProcessorEditor
+    , private juce::Timer
+{
 public:
     GainsyAudioProcessorEditor(GainsyAudioProcessor&);
     ~GainsyAudioProcessorEditor() override;
@@ -24,6 +28,7 @@ public:
     //==============================================================================
     void paint(juce::Graphics&) override;
     void resized() override;
+    void timerCallback () override;
 
 private:
     // This reference is provided as a quick way for your editor to
@@ -35,6 +40,9 @@ private:
 
     juce::Slider channelNumbox;
     std::unique_ptr<SliderAttachment> channelAttachment;
+
+    MeterDisplay meter;
+    int refreshRate = 30;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GainsyAudioProcessorEditor)
 };
