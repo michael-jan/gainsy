@@ -13,13 +13,15 @@
 GainsyAudioProcessorEditor::GainsyAudioProcessorEditor(GainsyAudioProcessor& p)
     : AudioProcessorEditor(&p)
     , audioProcessor(p)
-    , meter()
+      // TODO: don't hardcode these colors
+    , ratioMeter(juce::Colours::deeppink, juce::Colours::hotpink)
+    , loudnessMeter(juce::Colours::mediumslateblue, juce::Colours::lightskyblue)
 {
     // TODO: does setting the size of components here even matter..?
-
     modeSwitch.setSize(40, 120);
     channelNumbox.setSize(40, 120);
-    meter.setSize(40, 120);
+    ratioMeter.setSize(20, 120);
+    loudnessMeter.setSize(20, 120);
 
     channelNumbox.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
     channelNumbox.setSliderSnapsToMousePosition(false);
@@ -28,7 +30,10 @@ GainsyAudioProcessorEditor::GainsyAudioProcessorEditor(GainsyAudioProcessor& p)
 
     addAndMakeVisible(modeSwitch);
     addAndMakeVisible(channelNumbox);
-    addAndMakeVisible(meter);
+
+    // TODO: only display ratioMeter in the After instance
+    addAndMakeVisible(ratioMeter);
+    addAndMakeVisible(loudnessMeter);
 
     modeAttachment.reset(new ButtonAttachment(p.getParams(), "MODE", modeSwitch));
     channelAttachment.reset(new SliderAttachment(p.getParams(), "CHANNEL", channelNumbox));
@@ -56,7 +61,8 @@ void GainsyAudioProcessorEditor::resized()
 
     // TODO: proper layout. For now, just arrange the GUI in slices:
     auto w = bounds.getWidth() / 3;
-    // bounds.removeFromDIRECTION() modifies the rectangle in place,
+
+    // NOTE: bounds.removeFromDIRECTION() modifies the rectangle in place,
     // returning the stripped off portion.
     auto leftThird = bounds.removeFromLeft(w);
     auto rightThird = bounds.removeFromRight(w);
@@ -64,7 +70,10 @@ void GainsyAudioProcessorEditor::resized()
 
     modeSwitch.setBounds(leftThird);
     channelNumbox.setBounds(centerThird);
-    meter.setBounds(rightThird);
+
+    loudnessMeter.setBounds(rightThird.removeFromLeft(rightThird.getWidth()/2));
+    // TODO: only do anything with ratioMeter in the After instance
+    ratioMeter.setBounds(rightThird);
 
     auto JuceCSS = // use the power of CSS for best user experience
         "body {"
@@ -110,9 +119,12 @@ void GainsyAudioProcessorEditor::resized()
         "";
 }
 
-
 void GainsyAudioProcessorEditor::timerCallback ()
 {
-    meter.setLevels(audioProcessor.getRatio(), audioProcessor.getLoudness());
-    meter.repaint();
+    loudnessMeter.setLevel(audioProcessor.getLoudness());
+    loudnessMeter.repaint();
+
+    // TODO: only do anything with ratioMeter in the After instance
+    ratioMeter.setLevel(juce::Decibels::decibelsToGain(audioProcessor.getRatio()));
+    ratioMeter.repaint();
 }

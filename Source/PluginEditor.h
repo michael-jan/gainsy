@@ -41,7 +41,8 @@ private:
     juce::Slider channelNumbox;
     std::unique_ptr<SliderAttachment> channelAttachment;
 
-    MeterDisplay meter;
+    MeterDisplay ratioMeter;
+    MeterDisplay loudnessMeter;
     int refreshRate = 30;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GainsyAudioProcessorEditor)
