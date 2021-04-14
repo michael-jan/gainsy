@@ -14,6 +14,11 @@ GainsyAudioProcessorEditor::GainsyAudioProcessorEditor(GainsyAudioProcessor& p)
     : AudioProcessorEditor(&p)
     , audioProcessor(p)
       // TODO: don't hardcode these colors
+    , modeLabel("modeLabel", "mode")
+    , channelLabel("channelLabel", "channel")
+    , ratioLabel("ratioLabel", "ratio")
+    , beforeLoudnessLabel("beforeLoudnessLabel", "before")
+    , afterLoudnessLabel("afterLoudnessLabel", "after")
     , beforeLoudnessMeter(juce::Colours::lightskyblue, juce::Colours::mediumslateblue, juce::Colours::black, false)
     , ratioMeter(juce::Colours::hotpink, juce::Colours::deeppink, juce::Colours::black, true)
     , afterLoudnessMeter(juce::Colours::lightskyblue, juce::Colours::mediumslateblue, juce::Colours::black, false)
@@ -42,7 +47,7 @@ GainsyAudioProcessorEditor::GainsyAudioProcessorEditor(GainsyAudioProcessor& p)
 
     startTimerHz(refreshRate);
 
-    setSize(120, 360);
+    setSize(280, 180);
 }
 
 GainsyAudioProcessorEditor::~GainsyAudioProcessorEditor()
@@ -59,7 +64,7 @@ void GainsyAudioProcessorEditor::paint(juce::Graphics& g)
 
 void GainsyAudioProcessorEditor::resized()
 {
-    juce::Rectangle<int> bounds = getLocalBounds();
+    juce::Rectangle<int> bounds = getLocalBounds().withTrimmedBottom(juce::Font(fontSize).getHeight());
 
     // TODO: proper layout. For now, just arrange the GUI in slices:
     auto w = bounds.getWidth() / 4;
@@ -72,33 +77,36 @@ void GainsyAudioProcessorEditor::resized()
     auto r4 = bounds;
 
     auto modeBox = r1.removeFromTop(r1.getHeight()/2);
+    modeBox = modeBox.withSizeKeepingCentre(modeBox.getWidth()/3.5,
+                                            modeBox.getHeight()/5);
     modeSwitch.setBounds(modeBox);
     addAndMakeVisible(modeLabel);
-
-    auto channelBox = r1;
+    attachToComponent(modeLabel, modeSwitch, 4);
+    
+    auto channelBox = r1.withSizeKeepingCentre(r1.getWidth()/3,
+                                               r1.getHeight()/4);
     channelNumbox.setBounds(channelBox);
     addAndMakeVisible(channelLabel);
+    attachToComponent(channelLabel, channelNumbox, 4);
 
-    /*
-    channelModePanel.addPanel(0, &modeSwitch, false);
-    channelModePanel.addPanel(1, &channelNumbox, false);
-     */
-
-    // TODO: only do anything with meters in the After instance
-    auto beforeLoudnessBox = r2;
+    auto beforeLoudnessBox = r2.withSizeKeepingCentre(r2.getWidth()/5,
+                                                      r2.getHeight()/1.6);
     beforeLoudnessMeter.setBounds(beforeLoudnessBox);
     addAndMakeVisible(beforeLoudnessLabel);
-    attachToComponent(beforeLoudnessLabel, beforeLoudnessMeter, 2);
-
-    auto ratioBox = r3;
+    attachToComponent(beforeLoudnessLabel, beforeLoudnessMeter, 4);
+    
+    auto ratioBox = r3.withSizeKeepingCentre(r3.getWidth()/5,
+                                             r3.getHeight()/1.6);
     ratioMeter.setBounds(ratioBox);
     addAndMakeVisible(ratioLabel);
-    attachToComponent(ratioLabel, ratioMeter, 2);
+    attachToComponent(ratioLabel, ratioMeter, 4);
 
-    auto afterLoudnessBox = r4;
+    auto afterLoudnessBox = r4.withSizeKeepingCentre(r4.getWidth()/5,
+                                                     r4.getHeight()/1.6);
     afterLoudnessMeter.setBounds(afterLoudnessBox);
     addAndMakeVisible(afterLoudnessLabel);
-    attachToComponent(afterLoudnessLabel, afterLoudnessMeter, 2);
+    attachToComponent(afterLoudnessLabel, afterLoudnessMeter, 4);
+
 }
 
 void GainsyAudioProcessorEditor::timerCallback()
@@ -123,7 +131,7 @@ int GainsyAudioProcessorEditor::getTextWidth(juce::Label& label) {
 
 void GainsyAudioProcessorEditor::attachToComponent(juce::Label& label, juce::Component& component, int offset) {
     label.setJustificationType(juce::Justification::centred);
-    label.setFont(juce::Font(18));
+    label.setFont(juce::Font(fontSize));
 
     juce::Rectangle<int> labelBounds = component.getBounds();
 
