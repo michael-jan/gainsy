@@ -22,12 +22,6 @@ void MeterDisplay::paint(juce::Graphics& g)
     g.setColour(background);
     g.fillRect(bounds); // TODO: is it better to use g.fillAll() here?
 
-    // Draw middle line for bipolar
-    if (bipolar) {
-        g.setColour(accent);
-        g.drawHorizontalLine(height / 2, 0.0, 0.0);
-    }
-
     // Calculate height of foreground rectangle representing the level
     if (bipolar) {
         int halfHeight = height / 2;
@@ -51,6 +45,12 @@ void MeterDisplay::paint(juce::Graphics& g)
     // Fill in the level bar
     g.setColour(foreground);
     g.fillRect(bounds);
+
+    // Draw middle line for bipolar
+    if (bipolar) {
+        g.setColour(accent);
+        g.drawHorizontalLine(height / 2, 0.0, 0.0);
+    }
 }
 
 void MeterDisplay::resized()
