@@ -11,8 +11,8 @@
  */
 class MeterDisplay : public juce::Component {
 public:
-    // if bipolar,  -30.0 < level < 30.0
-    // else,        -30.0 < level < 0.0
+    // if bipolar,  -limit < level < limit
+    // else,        -limit < level < 0.0
     MeterDisplay(juce::Colour bg, juce::Colour fg, juce::Colour ac, bool b)
         : background(bg), foreground(fg), accent(ac), bipolar(b)
         , level(0.0), limit(60.0)
