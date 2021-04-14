@@ -149,8 +149,8 @@ void GainsyAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::
         buffer.clear(i, 0, buffer.getNumSamples());
 
     loudnessMatcher.processBlock(buffer,
-                                 modeParam->getIndex(), // before or after?
-                                 *channelParam);        // which Gainsy channel?
+                                 modeParam->getIndex() == 0, // before or after?
+                                 *channelParam);             // which Gainsy channel?
 }
 
 //==============================================================================

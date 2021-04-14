@@ -121,10 +121,10 @@ void GainsyAudioProcessorEditor::resized()
 
 void GainsyAudioProcessorEditor::timerCallback ()
 {
-    loudnessMeter.setLevel(audioProcessor.getLoudness());
+    loudnessMeter.setLevel(juce::Decibels::decibelsToGain(audioProcessor.getLoudness()));
     loudnessMeter.repaint();
 
     // TODO: only do anything with ratioMeter in the After instance
-    ratioMeter.setLevel(juce::Decibels::decibelsToGain(audioProcessor.getRatio()));
+    ratioMeter.setLevel(audioProcessor.getRatio());
     ratioMeter.repaint();
 }
