@@ -25,7 +25,9 @@ public:
                       bool isBefore,
                       int chanIndex);
 
-    inline float getLoudness(void)
+    float getBeforeLoudness(int chanIndex);
+
+    inline float getAfterLoudness(void)
     { return loudnessMeter.getMomentaryLoudness(); }
 
     inline float getRatio(void)

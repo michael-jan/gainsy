@@ -11,19 +11,22 @@
  */
 class MeterDisplay : public juce::Component {
 public:
-    MeterDisplay(juce::Colour fg, juce::Colour bg)
-        : background(bg), foreground(fg), level(0.0)
+    // if bipolar,  -30.0 < level < 30.0
+    // else,        -30.0 < level < 0.0
+    MeterDisplay(juce::Colour bg, juce::Colour fg, juce::Colour ac, bool b)
+        : background(bg), foreground(fg), accent(ac), bipolar(b)
+        , level(0.0), limit(60.0)
     {}
 
-    /** Clamps l to be between 0.0 and 1.0 */
     void setLevel(float l);
 
     void paint(juce::Graphics&) override;
     void resized() override;
 
 private:
-    juce::Colour background;
-    juce::Colour foreground;
+    const juce::Colour background, foreground, accent;
+    const bool bipolar;
+    const float limit;
 
     float level;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MeterDisplay)

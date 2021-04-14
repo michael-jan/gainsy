@@ -43,3 +43,9 @@ void LoudnessMatcher::processBlock(juce::AudioBuffer<float>& buffer,
         }
     }
 }
+
+float LoudnessMatcher::getBeforeLoudness(int chanIndex)
+{
+    float g = loudness[chanIndex];
+    return juce::Decibels::gainToDecibels(g);
+}
