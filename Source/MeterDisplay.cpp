@@ -17,7 +17,6 @@ void MeterDisplay::paint(juce::Graphics& g)
 {
     juce::Rectangle<int> bounds = getLocalBounds();
     int height = bounds.getHeight();
-    int minLim = -limit, maxLim = bipolar ? limit : 0.0;
 
     // Color in background
     g.setColour(background);
@@ -30,25 +29,28 @@ void MeterDisplay::paint(juce::Graphics& g)
     }
 
     // Calculate height of foreground rectangle representing the level
-    float ratio = (level - minLim) / (maxLim - minLim); // between 0.0 and 1.0
-    int levelHeight = static_cast<int>(height * ratio);
-
     if (bipolar) {
+        int halfHeight = height / 2;
         if (level < 0.0) {
-            bounds.removeFromTop(height / 2);
-            bounds.removeFromBottom((height / 2) - levelHeight);
+            float ratio = clamp(level / (-limit), 0.0, 1.0);
+            int levelHeight = static_cast<int>(height * ratio / 2);
+            bounds.removeFromTop(halfHeight);
+            bounds.removeFromBottom(halfHeight - levelHeight);
         } else {
-            bounds.removeFromBottom(height / 2);
-            bounds.removeFromTop((height / 2) - levelHeight);
+            float ratio = clamp(level / limit, 0.0, 1.0);
+            int levelHeight = static_cast<int>(height * ratio / 2);
+            bounds.removeFromBottom(halfHeight);
+            bounds.removeFromTop(halfHeight - levelHeight);
         }
     } else {
+        float ratio = clamp(level / -limit, 0.0, 1.0);
+        int levelHeight = static_cast<int>(height * ratio);
         bounds.removeFromTop(height - levelHeight);
     }
 
     // Fill in the level bar
     g.setColour(foreground);
     g.fillRect(bounds);
-
 }
 
 void MeterDisplay::resized()
