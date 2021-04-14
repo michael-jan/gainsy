@@ -25,14 +25,13 @@ void MeterDisplay::paint(juce::Graphics& g)
     // Calculate height of foreground rectangle representing the level
     if (bipolar) {
         int halfHeight = height / 2;
+        float ratio = clamp(std::abs(level) / limit, 0.0, 1.0);
+        int levelHeight = static_cast<int>(height * ratio / 2);
+
         if (level < 0.0) {
-            float ratio = clamp(level / -limit, 0.0, 1.0);
-            int levelHeight = static_cast<int>(height * ratio / 2);
             bounds.removeFromTop(halfHeight);
             bounds.removeFromBottom(halfHeight - levelHeight);
         } else {
-            float ratio = clamp(level / limit, 0.0, 1.0);
-            int levelHeight = static_cast<int>(height * ratio / 2);
             bounds.removeFromBottom(halfHeight);
             bounds.removeFromTop(halfHeight - levelHeight);
         }
