@@ -15,7 +15,7 @@ public:
     // else,        -30.0 < level < 0.0
     MeterDisplay(juce::Colour bg, juce::Colour fg, juce::Colour ac, bool b)
         : background(bg), foreground(fg), accent(ac), bipolar(b)
-        , level(0.0), limit(30.0)
+        , level(0.0), limit(60.0)
     {}
 
     void setLevel(float l);
