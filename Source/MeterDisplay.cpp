@@ -32,7 +32,7 @@ void MeterDisplay::paint(juce::Graphics& g)
     if (bipolar) {
         int halfHeight = height / 2;
         if (level < 0.0) {
-            float ratio = clamp(level / (-limit), 0.0, 1.0);
+            float ratio = clamp((level + limit) / limit, 0.0, 1.0);
             int levelHeight = static_cast<int>(height * ratio / 2);
             bounds.removeFromTop(halfHeight);
             bounds.removeFromBottom(halfHeight - levelHeight);
@@ -43,7 +43,7 @@ void MeterDisplay::paint(juce::Graphics& g)
             bounds.removeFromTop(halfHeight - levelHeight);
         }
     } else {
-        float ratio = clamp(level / -limit, 0.0, 1.0);
+        float ratio = clamp((level + limit) / limit, 0.0, 1.0);
         int levelHeight = static_cast<int>(height * ratio);
         bounds.removeFromTop(height - levelHeight);
     }
