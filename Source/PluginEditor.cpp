@@ -116,8 +116,8 @@ void GainsyAudioProcessorEditor::timerCallback()
     beforeLoudnessMeter.repaint();
 
     float r = juce::Decibels::gainToDecibels(audioProcessor.getRatio());
-    DBG("Setting ratio: ");
-    DBG(r);
+//    DBG("Setting ratio: ");
+//    DBG(r);
     ratioMeter.setLevel(r);
     ratioMeter.repaint();
 
