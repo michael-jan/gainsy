@@ -85,7 +85,7 @@ void GainsyAudioProcessorEditor::resized()
      */
 
     // TODO: only do anything with meters in the After instance
-    auto beforeLoudnessBox = r4;
+    auto beforeLoudnessBox = r2;
     beforeLoudnessMeter.setBounds(beforeLoudnessBox);
     addAndMakeVisible(beforeLoudnessLabel);
     attachToComponent(beforeLoudnessLabel, beforeLoudnessMeter, 2);
@@ -107,7 +107,10 @@ void GainsyAudioProcessorEditor::timerCallback()
     beforeLoudnessMeter.setLevel(audioProcessor.getBeforeLoudness());
     beforeLoudnessMeter.repaint();
 
-    ratioMeter.setLevel(juce::Decibels::gainToDecibels(audioProcessor.getRatio()));
+    float r = juce::Decibels::gainToDecibels(audioProcessor.getRatio());
+    DBG("Setting ratio: ");
+    DBG(r);
+    ratioMeter.setLevel(r);
     ratioMeter.repaint();
 
     afterLoudnessMeter.setLevel(audioProcessor.getAfterLoudness());
