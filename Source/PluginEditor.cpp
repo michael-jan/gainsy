@@ -62,70 +62,43 @@ void GainsyAudioProcessorEditor::resized()
     juce::Rectangle<int> bounds = getLocalBounds();
 
     // TODO: proper layout. For now, just arrange the GUI in slices:
-    auto w = bounds.getWidth() / 3;
+    auto w = bounds.getWidth() / 4;
 
     // NOTE: bounds.removeFromDIRECTION() modifies the rectangle in place,
     // returning the stripped off portion.
-    auto leftThird = bounds.removeFromLeft(w);
-    auto rightThird = bounds.removeFromRight(w);
-    auto centerThird = bounds;
+    auto r1 = bounds.removeFromLeft(w);
+    auto r2 = bounds.removeFromLeft(w);
+    auto r3 = bounds.removeFromLeft(w);
+    auto r4 = bounds;
 
-    modeSwitch.setBounds(leftThird);
-    channelNumbox.setBounds(centerThird);
+    auto modeBox = r1.removeFromTop(r1.getHeight()/2);
+    modeSwitch.setBounds(modeBox);
+    addAndMakeVisible(modeLabel);
 
-    // more quick and dirty splitting
-    bounds = rightThird;
-    leftThird = bounds.removeFromLeft(w);
-    rightThird = bounds.removeFromRight(w);
-    centerThird = bounds;
+    auto channelBox = r1;
+    channelNumbox.setBounds(channelBox);
+    addAndMakeVisible(channelLabel);
 
-    // TODO: only do anything with ratioMeter in the After instance
-    beforeLoudnessMeter.setBounds(leftThird);
-    ratioMeter.setBounds(centerThird);
-    afterLoudnessMeter.setBounds(rightThird);
+    /*
+    channelModePanel.addPanel(0, &modeSwitch, false);
+    channelModePanel.addPanel(1, &channelNumbox, false);
+     */
 
-    auto JuceCSS = // use the power of CSS for best user experience
-        "body {"
-        "  font-family: Helvetica, arial, sans-serif;"
-        "  font-size: 14px;"
-        "  line-height: 1.6;"
-        "  padding-top: 10px;"
-        "  padding-bottom: 10px;"
-        "  background-color: white;"
-        "  padding: 30px; }"
-        ""
-        "h1 {"
-        "  font-size: 28px;"
-        "  color: black; }"
-        ""
-        "h2 {"
-        "  font-size: 24px;"
-        "  border-bottom: 1px solid #cccccc;"
-        "  color: black; }"
-        ""
-        "h3 {"
-        "  font-size: 18px; }"
-        ""
-        "h4 {"
-        "  font-size: 16px; }"
-        ""
-        "h5 {"
-        "  font-size: 14px; }"
-        ""
-        "h6 {"
-        "  color: #777777;"
-        "  font-size: 14px; }"
-        ""
-        "p, blockquote, ul, ol, dl, li, table, pre {"
-        "  margin: 15px 0; }"
-        ""
-        "li p.first {"
-        "  display: inline-block; }"
-        "li {"
-        "  margin: 0; }"
-        "ul, ol {"
-        "  padding-left: 30px; }"
-        "";
+    // TODO: only do anything with meters in the After instance
+    auto beforeLoudnessBox = r4;
+    beforeLoudnessMeter.setBounds(beforeLoudnessBox);
+    addAndMakeVisible(beforeLoudnessLabel);
+    attachToComponent(beforeLoudnessLabel, beforeLoudnessMeter, 2);
+
+    auto ratioBox = r3;
+    ratioMeter.setBounds(ratioBox);
+    addAndMakeVisible(ratioLabel);
+    attachToComponent(ratioLabel, ratioMeter, 2);
+
+    auto afterLoudnessBox = r4;
+    afterLoudnessMeter.setBounds(afterLoudnessBox);
+    addAndMakeVisible(afterLoudnessLabel);
+    attachToComponent(afterLoudnessLabel, afterLoudnessMeter, 2);
 }
 
 void GainsyAudioProcessorEditor::timerCallback()
@@ -139,4 +112,24 @@ void GainsyAudioProcessorEditor::timerCallback()
 
     afterLoudnessMeter.setLevel(audioProcessor.getAfterLoudness());
     afterLoudnessMeter.repaint();
+}
+
+int GainsyAudioProcessorEditor::getTextWidth(juce::Label& label) {
+    return label.getFont().getStringWidth(label.getText());
+}
+
+void GainsyAudioProcessorEditor::attachToComponent(juce::Label& label, juce::Component& component, int offset) {
+    label.setJustificationType(juce::Justification::centred);
+    label.setFont(juce::Font(18));
+
+    juce::Rectangle<int> labelBounds = component.getBounds();
+
+    int originalCentreX = labelBounds.getCentreX();
+    labelBounds.setLeft(originalCentreX - getTextWidth(label));
+    labelBounds.setRight(originalCentreX + getTextWidth(label));
+
+    labelBounds.setTop(component.getBounds().getBottom() + offset);
+    labelBounds.setBottom(component.getBounds().getBottom() + label.getFont().getHeight() + offset);
+
+    label.setBounds(labelBounds.translated(0, 1));
 }
