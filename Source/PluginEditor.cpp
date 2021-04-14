@@ -68,63 +68,60 @@ void GainsyAudioProcessorEditor::resized()
     auto rightThird = bounds.removeFromRight(w);
     auto centerThird = bounds;
 
-    modeSwitch.setBounds(leftThird);
-    channelNumbox.setBounds(centerThird);
+    auto modeBox = leftThird.removeFromTop(leftThird.getHeight()/2);
+    modeSwitch.setBounds(modeBox);
+    addAndMakeVisible(modeLabel);
+    
+    auto channelBox = leftThird;
+    channelNumbox.setBounds(channelBox);
+    addAndMakeVisible(channelLabel);
+    
+    /*
+    channelModePanel.addPanel(0, &modeSwitch, false);
+    channelModePanel.addPanel(1, &channelNumbox, false);
+     */
 
-    loudnessMeter.setBounds(rightThird.removeFromLeft(rightThird.getWidth()/2));
+    auto loudnessBox = centerThird;
+    loudnessMeter.setBounds(loudnessBox);
+    addAndMakeVisible(loudnessLabel);
+    attachToComponent(loudnessLabel, loudnessMeter, 2);
+    
     // TODO: only do anything with ratioMeter in the After instance
-    ratioMeter.setBounds(rightThird);
+    auto ratioBox = rightThird;
+    ratioMeter.setBounds(ratioBox);
+    addAndMakeVisible(ratioLabel);
+    attachToComponent(ratioLabel, ratioMeter, 2);
 
-    auto JuceCSS = // use the power of CSS for best user experience
-        "body {"
-        "  font-family: Helvetica, arial, sans-serif;"
-        "  font-size: 14px;"
-        "  line-height: 1.6;"
-        "  padding-top: 10px;"
-        "  padding-bottom: 10px;"
-        "  background-color: white;"
-        "  padding: 30px; }"
-        ""
-        "h1 {"
-        "  font-size: 28px;"
-        "  color: black; }"
-        ""
-        "h2 {"
-        "  font-size: 24px;"
-        "  border-bottom: 1px solid #cccccc;"
-        "  color: black; }"
-        ""
-        "h3 {"
-        "  font-size: 18px; }"
-        ""
-        "h4 {"
-        "  font-size: 16px; }"
-        ""
-        "h5 {"
-        "  font-size: 14px; }"
-        ""
-        "h6 {"
-        "  color: #777777;"
-        "  font-size: 14px; }"
-        ""
-        "p, blockquote, ul, ol, dl, li, table, pre {"
-        "  margin: 15px 0; }"
-        ""
-        "li p.first {"
-        "  display: inline-block; }"
-        "li {"
-        "  margin: 0; }"
-        "ul, ol {"
-        "  padding-left: 30px; }"
-        "";
 }
 
 void GainsyAudioProcessorEditor::timerCallback ()
 {
     loudnessMeter.setLevel(juce::Decibels::decibelsToGain(audioProcessor.getLoudness()));
     loudnessMeter.repaint();
-
+    
     // TODO: only do anything with ratioMeter in the After instance
     ratioMeter.setLevel(audioProcessor.getRatio());
     ratioMeter.repaint();
+    
 }
+
+int GainsyAudioProcessorEditor::getTextWidth(juce::Label& label) {
+    return label.getFont().getStringWidth(label.getText());
+}
+
+void GainsyAudioProcessorEditor::attachToComponent(juce::Label& label, juce::Component& component, int offset) {
+    label.setJustificationType(juce::Justification::centred);
+    label.setFont(juce::Font(18));
+
+    juce::Rectangle<int> labelBounds = component.getBounds();
+
+    int originalCentreX = labelBounds.getCentreX();
+    labelBounds.setLeft(originalCentreX - getTextWidth(label));
+    labelBounds.setRight(originalCentreX + getTextWidth(label));
+
+    labelBounds.setTop(component.getBounds().getBottom() + offset);
+    labelBounds.setBottom(component.getBounds().getBottom() + label.getFont().getHeight() + offset);
+
+    label.setBounds(labelBounds.translated(0, 1));
+}
+
