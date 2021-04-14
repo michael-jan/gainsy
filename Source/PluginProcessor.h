@@ -56,8 +56,11 @@ public:
     //==============================================================================
     juce::AudioProcessorValueTreeState& getParams() { return params; }
 
-    inline float getLoudness(void)
-    { return loudnessMatcher.getLoudness(); }
+    inline float getBeforeLoudness(void)
+    { return loudnessMatcher.getBeforeLoudness(*channelParam); }
+
+    inline float getAfterLoudness(void)
+    { return loudnessMatcher.getAfterLoudness(); }
 
     inline float getRatio(void)
     { return loudnessMatcher.getRatio(); }

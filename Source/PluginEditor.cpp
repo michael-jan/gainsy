@@ -14,14 +14,15 @@ GainsyAudioProcessorEditor::GainsyAudioProcessorEditor(GainsyAudioProcessor& p)
     : AudioProcessorEditor(&p)
     , audioProcessor(p)
       // TODO: don't hardcode these colors
-    , ratioMeter(juce::Colours::deeppink, juce::Colours::hotpink)
-    , loudnessMeter(juce::Colours::mediumslateblue, juce::Colours::lightskyblue)
+    , beforeLoudnessMeter(juce::Colours::lightskyblue, juce::Colours::mediumslateblue, juce::Colours::black, false)
+    , ratioMeter(juce::Colours::hotpink, juce::Colours::deeppink, juce::Colours::black, true)
+    , afterLoudnessMeter(juce::Colours::lightskyblue, juce::Colours::mediumslateblue, juce::Colours::black, false)
 {
     // TODO: does setting the size of components here even matter..?
-    modeSwitch.setSize(40, 120);
-    channelNumbox.setSize(40, 120);
-    ratioMeter.setSize(20, 120);
-    loudnessMeter.setSize(20, 120);
+    /* modeSwitch.setSize(40, 120); */
+    /* channelNumbox.setSize(40, 120); */
+    /* ratioMeter.setSize(20, 120); */
+    /* afterLoudnessMeter.setSize(20, 120); */
 
     channelNumbox.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
     channelNumbox.setSliderSnapsToMousePosition(false);
@@ -32,8 +33,9 @@ GainsyAudioProcessorEditor::GainsyAudioProcessorEditor(GainsyAudioProcessor& p)
     addAndMakeVisible(channelNumbox);
 
     // TODO: only display ratioMeter in the After instance
+    addAndMakeVisible(beforeLoudnessMeter);
     addAndMakeVisible(ratioMeter);
-    addAndMakeVisible(loudnessMeter);
+    addAndMakeVisible(afterLoudnessMeter);
 
     modeAttachment.reset(new ButtonAttachment(p.getParams(), "MODE", modeSwitch));
     channelAttachment.reset(new SliderAttachment(p.getParams(), "CHANNEL", channelNumbox));
@@ -71,9 +73,16 @@ void GainsyAudioProcessorEditor::resized()
     modeSwitch.setBounds(leftThird);
     channelNumbox.setBounds(centerThird);
 
-    loudnessMeter.setBounds(rightThird.removeFromLeft(rightThird.getWidth()/2));
+    // more quick and dirty splitting
+    bounds = rightThird;
+    leftThird = bounds.removeFromLeft(w);
+    rightThird = bounds.removeFromRight(w);
+    centerThird = bounds;
+
     // TODO: only do anything with ratioMeter in the After instance
-    ratioMeter.setBounds(rightThird);
+    beforeLoudnessMeter.setBounds(leftThird);
+    ratioMeter.setBounds(centerThird);
+    afterLoudnessMeter.setBounds(rightThird);
 
     auto JuceCSS = // use the power of CSS for best user experience
         "body {"
@@ -119,12 +128,15 @@ void GainsyAudioProcessorEditor::resized()
         "";
 }
 
-void GainsyAudioProcessorEditor::timerCallback ()
+void GainsyAudioProcessorEditor::timerCallback()
 {
-    loudnessMeter.setLevel(juce::Decibels::decibelsToGain(audioProcessor.getLoudness()));
-    loudnessMeter.repaint();
-
     // TODO: only do anything with ratioMeter in the After instance
-    ratioMeter.setLevel(audioProcessor.getRatio());
+    beforeLoudnessMeter.setLevel(audioProcessor.getBeforeLoudness());
+    beforeLoudnessMeter.repaint();
+
+    ratioMeter.setLevel(juce::Decibels::gainToDecibels(audioProcessor.getRatio()));
     ratioMeter.repaint();
+
+    afterLoudnessMeter.setLevel(audioProcessor.getAfterLoudness());
+    afterLoudnessMeter.repaint();
 }

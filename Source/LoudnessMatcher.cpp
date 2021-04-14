@@ -43,3 +43,8 @@ void LoudnessMatcher::processBlock(juce::AudioBuffer<float>& buffer,
         }
     }
 }
+
+float LoudnessMatcher::getBeforeLoudness(int chanIndex)
+{
+    return loudness[chanIndex];
+}
