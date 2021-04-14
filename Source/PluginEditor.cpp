@@ -16,7 +16,7 @@ GainsyAudioProcessorEditor::GainsyAudioProcessorEditor(GainsyAudioProcessor& p)
       // TODO: don't hardcode these colors
     , modeLabel("modeLabel", "mode")
     , channelLabel("channelLabel", "channel")
-    , ratioLabel("ratioLabel", "ratio")
+    , ratioLabel("ratioLabel", "diff")
     , beforeLoudnessLabel("beforeLoudnessLabel", "before")
     , afterLoudnessLabel("afterLoudnessLabel", "after")
     , beforeLoudnessMeter(juce::Colours::lightskyblue, juce::Colours::mediumslateblue, juce::Colours::black, false)
@@ -82,7 +82,7 @@ void GainsyAudioProcessorEditor::resized()
     modeSwitch.setBounds(modeBox);
     addAndMakeVisible(modeLabel);
     attachToComponent(modeLabel, modeSwitch, 4);
-    
+
     auto channelBox = r1.withSizeKeepingCentre(r1.getWidth()/3,
                                                r1.getHeight()/4);
     channelNumbox.setBounds(channelBox);
@@ -94,7 +94,7 @@ void GainsyAudioProcessorEditor::resized()
     beforeLoudnessMeter.setBounds(beforeLoudnessBox);
     addAndMakeVisible(beforeLoudnessLabel);
     attachToComponent(beforeLoudnessLabel, beforeLoudnessMeter, 4);
-    
+
     auto ratioBox = r3.withSizeKeepingCentre(r3.getWidth()/5,
                                              r3.getHeight()/1.6);
     ratioMeter.setBounds(ratioBox);
