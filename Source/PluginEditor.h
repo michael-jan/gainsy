@@ -55,6 +55,8 @@ private:
     juce::Label loudnessLabel;
     
     int refreshRate = 30;
+    
+    const int fontSize = 16;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GainsyAudioProcessorEditor)
 };
