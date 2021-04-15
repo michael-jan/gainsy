@@ -120,7 +120,6 @@ void GainsyAudioProcessorEditor::timerCallback()
         ratioMeter.setLevel(r);
         afterLoudnessMeter.setLevel(audioProcessor.getAfterLoudness());
     }
-
     beforeLoudnessMeter.repaint();
     ratioMeter.repaint();
     afterLoudnessMeter.repaint();
