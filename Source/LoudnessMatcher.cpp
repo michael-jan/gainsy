@@ -12,6 +12,7 @@
 
 // global array shared by all instances
 std::atomic<float> loudness[128] = {0.0};
+const float maxRatioRamp = 0.69;
 
 void LoudnessMatcher::prepareToPlay(double sampleRate,
                                     int numberOfInputChannels,
@@ -38,6 +39,8 @@ void LoudnessMatcher::processBlock(juce::AudioBuffer<float>& buffer,
     } else {
         if (currentLoudness > closeToSilenceDb) {
             float ratio = loudness[chanIndex] / currentLoudness;
+            if (ratio - prevRatio > maxRatioRamp)
+                ratio = prevRatio + maxRatioRamp;
             buffer.applyGainRamp(0, buffer.getNumSamples(), prevRatio, ratio);
             prevRatio = ratio;
         }
