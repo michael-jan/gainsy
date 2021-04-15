@@ -108,17 +108,26 @@ void GainsyAudioProcessorEditor::timerCallback()
 {
     // TODO: only do anything with ratioMeter in the After instance
     float beforeLoudness = audioProcessor.getBeforeLoudness();
+    float ratioDB = juce::Decibels::gainToDecibels(audioProcessor.getRatio());
+    float afterLoudness = audioProcessor.getAfterLoudness();
+
     if (juce::Decibels::decibelsToGain(beforeLoudness) < closeToSilenceDb) {
+        // before is silent, so don't display anything.
         float silence = juce::Decibels::gainToDecibels(0.0);
         beforeLoudnessMeter.setLevel(silence);
         ratioMeter.setLevel(0.0);
         afterLoudnessMeter.setLevel(silence);
-    }
-    else {
-        beforeLoudnessMeter.setLevel(audioProcessor.getBeforeLoudness());
-        float r = juce::Decibels::gainToDecibels(audioProcessor.getRatio());
-        ratioMeter.setLevel(r);
-        afterLoudnessMeter.setLevel(audioProcessor.getAfterLoudness());
+    } else if (juce::Decibels::decibelsToGain(afterLoudness) < closeToSilenceDb) {
+        // after is silence even though before isn't.
+        // display loudness anyway, but don't display ratio (which will just look maxed out)
+        beforeLoudnessMeter.setLevel(beforeLoudness);
+        ratioMeter.setLevel(0.0);
+        afterLoudnessMeter.setLevel(afterLoudness);
+    } else {
+        // display everything
+        beforeLoudnessMeter.setLevel(beforeLoudness);
+        ratioMeter.setLevel(ratioDB);
+        afterLoudnessMeter.setLevel(afterLoudness);
     }
     beforeLoudnessMeter.repaint();
     ratioMeter.repaint();
