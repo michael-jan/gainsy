@@ -36,7 +36,7 @@ void LoudnessMatcher::processBlock(juce::AudioBuffer<float>& buffer,
     if (isBefore) {
         loudness[chanIndex] = currentLoudness;
     } else {
-        if (currentLoudness > 0.00001) {
+        if (currentLoudness > closeToSilenceDb) {
             float ratio = loudness[chanIndex] / currentLoudness;
             buffer.applyGainRamp(0, buffer.getNumSamples(), prevRatio, ratio);
             prevRatio = ratio;

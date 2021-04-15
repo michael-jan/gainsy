@@ -8,6 +8,7 @@
 
 #include "PluginEditor.h"
 #include "PluginProcessor.h"
+#include "LoudnessMatcher.h" // just for "closeToSilence" variable
 
 //==============================================================================
 GainsyAudioProcessorEditor::GainsyAudioProcessorEditor(GainsyAudioProcessor& p)
@@ -23,12 +24,6 @@ GainsyAudioProcessorEditor::GainsyAudioProcessorEditor(GainsyAudioProcessor& p)
     , ratioMeter(juce::Colours::hotpink, juce::Colours::deeppink, juce::Colours::black, true)
     , afterLoudnessMeter(juce::Colours::lightskyblue, juce::Colours::mediumslateblue, juce::Colours::black, false)
 {
-    // TODO: does setting the size of components here even matter..?
-    /* modeSwitch.setSize(40, 120); */
-    /* channelNumbox.setSize(40, 120); */
-    /* ratioMeter.setSize(20, 120); */
-    /* afterLoudnessMeter.setSize(20, 120); */
-
     channelNumbox.setSliderStyle(juce::Slider::SliderStyle::LinearBarVertical);
     channelNumbox.setSliderSnapsToMousePosition(false);
     channelNumbox.setMouseDragSensitivity(350);
@@ -112,16 +107,22 @@ void GainsyAudioProcessorEditor::resized()
 void GainsyAudioProcessorEditor::timerCallback()
 {
     // TODO: only do anything with ratioMeter in the After instance
-    beforeLoudnessMeter.setLevel(audioProcessor.getBeforeLoudness());
+    float beforeLoudness = audioProcessor.getBeforeLoudness();
+    if (juce::Decibels::decibelsToGain(beforeLoudness) < closeToSilenceDb) {
+        float silence = juce::Decibels::gainToDecibels(0.0);
+        beforeLoudnessMeter.setLevel(silence);
+        ratioMeter.setLevel(0.0);
+        afterLoudnessMeter.setLevel(silence);
+    }
+    else {
+        beforeLoudnessMeter.setLevel(audioProcessor.getBeforeLoudness());
+        float r = juce::Decibels::gainToDecibels(audioProcessor.getRatio());
+        ratioMeter.setLevel(r);
+        afterLoudnessMeter.setLevel(audioProcessor.getAfterLoudness());
+    }
+
     beforeLoudnessMeter.repaint();
-
-    float r = juce::Decibels::gainToDecibels(audioProcessor.getRatio());
-    DBG("Setting ratio: ");
-    DBG(r);
-    ratioMeter.setLevel(r);
     ratioMeter.repaint();
-
-    afterLoudnessMeter.setLevel(audioProcessor.getAfterLoudness());
     afterLoudnessMeter.repaint();
 }
 

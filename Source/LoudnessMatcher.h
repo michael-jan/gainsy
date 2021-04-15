@@ -14,6 +14,8 @@
 
 #include "Ebu128LoudnessMeter.h"
 
+const float closeToSilenceDb = 0.000001;
+
 class LoudnessMatcher {
 public:
     void prepareToPlay(double sampleRate,
